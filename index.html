@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #000;
+  stroke-width: .5px;
+}
+
+.tooltip {
+	position: absolute;
+	width: 200px;
+	height: 28px;
+	pointer-events: none;
+}
+
+.chart {
+  display: inline-block;
+  height: 500px;
+  width: 300px;
+  margin: 20px;
+}
+</style>
+<body>
+<div id="charts">
+  <div id="chart-left" class="chart">
+    <div class="title">Impot (en €) en fonction du patrimoine (en €) pour chaque commune </div>
+  </div>
+  <div id="chart-right" class="chart">
+    <div class="title">Nombre de redevables en fonction des régions françaises</div>
+  </div>
+</div>
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<script>
+
+var margin = {top: 20, right: 20, bottom: 200, left: 40},
+    width = 1200 - margin.left - margin.right,
+    height = 1000 - margin.top - margin.bottom;
+
+var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+var tooltip = d3.select("body").append("div")
+					.attr("class", "tooltip")
+					.style("opacity", 0);
+
+function scatterplot(e1, data, w, h, var_x, var_y,var_r,var_color) {
+
+	var x = d3.scaleLinear()
+    .range([0, w]);
+
+  var y = d3.scaleLinear()
+      .range([h, 0]);
+
+  var r = d3.scaleSqrt()
+      .range([0,0.2]);
+
+  var xAxis = d3.axisBottom()
+      .scale(x);
+
+  var yAxis = d3.axisLeft()
+      .scale(y);
+
+	x.domain(d3.extent(data, function(d){
+		return d[var_x];
+	})).nice();
+
+	y.domain(d3.extent(data, function(d){
+		return d[var_y];
+	})).nice();
+
+//	r.domain(d3.extent(data, function(d){
+//		return d[var_r];
+//	})).nice();
+
+  var svg = e1.append("svg")
+    .attr("width", w + margin.left + margin.right)
+    .attr("height", h + margin.bottom + margin.top)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  
+  svg.append('g')
+    .attr('transform', 'translate(0,' + h + ')')
+    .attr('class', 'x axis')
+    .call(xAxis)
+    .selectAll("text")  
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", "rotate(-65)");
+  
+  svg.append('g')
+    .attr('transform', 'translate(0,0)')
+    .attr('class', 'y axis')
+    .call(yAxis);
+
+	svg.append('text')
+		.attr('x', 10)
+		.attr('y', 10)
+		.attr('class', 'label')
+		.text('ISF (€)');
+
+	svg.append('text')
+		.attr('x', w)
+		.attr('y', h -10)
+		.attr('text-anchor', 'end')
+		.attr('class', 'label')
+		.text('Patrimoine (€)');
+
+  svg.selectAll(".dot")
+    .data(data)
+  .enter().append("circle")
+    .attr("class", "dot")
+    .attr("r", function(d) { return r(d[var_r]); })
+    .attr("cx", function(d) { return x(d[var_x]); })
+    .attr("cy", function(d) { return y(d[var_y]); })
+    .style("fill", function(d) { return color(d[var_color]); })
+    .on("mouseover", function(d){
+			// highlight on
+    	d3.selectAll(".dot").filter(function(e) {
+        return e === d;
+      })
+      .style("stroke-width", 10)
+		 })
+		.on("mouseout", function(d){
+    	d3.selectAll(".dot").filter(function(e) {
+        return e === d;
+      })
+      .style("stroke-width", .5)
+		})
+		.on("click", function(d){
+			// selection on/off
+		});
+  
+ }
+  
+function barchart(e1, data, w, h, var_x, var_y,var_color){
+ 
+  var svg = e1.append("svg")
+    .attr("width", w + margin.left + margin.right)
+    .attr("height", h + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var x = d3.scaleBand()
+  //      .domain(data.map(function(entry){
+    //        return entry.key;
+   //     }))
+    .rangeRound([0, w])
+    .padding(0.1);  
+
+  var y = d3.scaleLinear()
+    .range([h, 0]);
+
+  var xAxis = d3.axisBottom()
+    .scale(x);
+    //.ticks(15, "");
+
+  var yAxis = d3.axisLeft()
+    .scale(y)
+
+  x.domain(data.map(function(d) { return d[var_x]; }));
+  y.domain([0, d3.max(data, function(d) { return d[var_y]; })]);
+  
+  svg.append('g')
+    .attr('transform', 'translate(0,' + h + ')')
+    .attr('class', 'x axis')
+    .call(xAxis)
+    .selectAll("text")  
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", "0.1em")
+        .attr("transform", "rotate(-65)");
+  
+  svg.append('g')
+    .attr('transform', 'translate(0,0)')
+    .attr('class', 'y axis')
+    .call(yAxis);
+  // svg.append("g")
+  //     .attr("class", "x axis")
+  //     .attr("transform", "translate(0," + height + ")")
+  //     .call(xAxis)
+  //     .selectAll("text")  
+  //         .style("text-anchor", "end")
+  //         .attr("dx", "-0.9em")
+  //         .attr("dy", "0.5em")
+  //         .attr("transform", function(d) {
+  //               return "rotate(-55)" 
+  //               });
+
+  // svg.append("g")
+  //     .attr("class", "y axis")
+  //     .call(yAxis)
+  //     .append("text")
+  //     .attr("transform", "rotate(-90)")
+  //     .attr("y", 12)
+  //     .attr("dy", "0.1em")
+  //     .style("text-anchor", "end")
+  //     .text("Nombre de redevables");
+
+  svg.append('text')
+    .attr('x', w)
+    .attr('y', h - 20)
+    .attr('text-anchor', 'end')
+    .attr('class', 'label')
+    .text('Régions');
+
+  svg.append('text')
+    .attr('x', 10)
+    .attr('y', 10)
+    .attr('class', 'label')
+    .text('Nombre de redevables');
+
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("y", 400)
+      .transition().duration(1000)
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d[var_x]); })
+      .attr("width", x.bandwidth())
+      .attr("y", function(d) { return y(d[var_y]); })
+      .attr("height", function(d) { return h - y(d[var_y]); })
+      .style("fill", function(d) { return color(d[var_color]); })
+
+};
+  
+d3.csv('isf.csv', function(error, data){
+	data.forEach(function(d){
+    d.patrimoine_moyen_en_euros = +d.patrimoine_moyen_en_euros;
+    d.impot_moyen_en_euros  = +d.impot_moyen_en_euros;
+    d.nombre_de_redevables = +d.nombre_de_redevables;
+    d.Commune = d.Commune;
+	});
+
+	scatterplot(d3.select("#chart-left"), data, width/4, height/2, "patrimoine_moyen_en_euros", "impot_moyen_en_euros","nombre_de_redevables","Regions")
+
+  barchart(d3.select("#chart-right"), data, 3*width/4, height/2, "Regions","nombre_de_redevables","Regions")
+
+  
+});
+  
+</script>
