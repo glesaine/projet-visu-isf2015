@@ -55,7 +55,7 @@ div.tooltip {
 <body>
 <div id="charts">
   <div id="chart-left" class="chart">
-    <div class="title">Impot (en €) en fonction du patrimoine (en €) pour chaque commune </div>
+    <div class="title">Impot de Solidarité sur la Fortune moyen (en €) en fonction du patrimoine (en €) au sein de chaque commune française </div>
   </div>
   <div id="chart-right" class="chart">
     <div class="title">Nombre de redevables en fonction des régions françaises</div>
@@ -64,8 +64,8 @@ div.tooltip {
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
-var margin = {top: 20, right: 20, bottom: 200, left: 40},
-    width = 1150 - margin.left - margin.right,
+var margin = {top: 20, right: 20, bottom: 200, left: 50},
+    width = 1180 - margin.left - margin.right,
     height = 1000 - margin.top - margin.bottom;
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
@@ -267,19 +267,20 @@ function barchart(e1, data, w, h, var_x, var_y,var_color){
 
 };
   
-d3.csv('isf.csv', function(error, data){
-	data.forEach(function(d){
+d3.csv('isf.csv', function(error, data1){
+	data1.forEach(function(d){
     d.patrimoine_moyen_en_euros = +d.patrimoine_moyen_en_euros;
     d.impot_moyen_en_euros  = +d.impot_moyen_en_euros;
     d.nombre_de_redevables = +d.nombre_de_redevables;
     d.Commune = d.Commune;
 	});
-
-	scatterplot(d3.select("#chart-left"), data, width/4, height/2, "patrimoine_moyen_en_euros", "impot_moyen_en_euros","nombre_de_redevables","Regions")
-
-  barchart(d3.select("#chart-right"), data, 3*width/4, height/2, "Regions","nombre_de_redevables","Regions")
-
-  
+	scatterplot(d3.select("#chart-left"), data1, width/4, height/2, "patrimoine_moyen_en_euros", "impot_moyen_en_euros","nombre_de_redevables","Regions")  
 });
-  
+
+d3.csv('redevables_cumules_regions.csv', function(error, data2){
+  data2.forEach(function(d){
+    d.nombre_de_redevables_cumules = +d.nombre_de_redevables_cumules;
+  });
+  barchart(d3.select("#chart-right"), data2, 3*width/4, height/2, "regions","nombre_de_redevables_cumules","regions")
+});  
 </script>
