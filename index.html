@@ -267,7 +267,7 @@ function barchart(e1, data, w, h, var_x, var_y,var_color){
 
 };
   
-d3.csv('isf.csv', function(error, data1){
+d3.csv('isf_moyen_france_2015.csv', function(error, data1){
 	data1.forEach(function(d){
     d.patrimoine_moyen_en_euros = +d.patrimoine_moyen_en_euros;
     d.impot_moyen_en_euros  = +d.impot_moyen_en_euros;
@@ -277,7 +277,7 @@ d3.csv('isf.csv', function(error, data1){
 	scatterplot(d3.select("#chart-left"), data1, width/4, height/2, "patrimoine_moyen_en_euros", "impot_moyen_en_euros","nombre_de_redevables","Regions")  
 });
 
-d3.csv('redevables_cumules_regions.csv', function(error, data2){
+d3.csv('isf_redevables_cumules_regions_2015.csv', function(error, data2){
   data2.forEach(function(d){
     d.nombre_de_redevables_cumules = +d.nombre_de_redevables_cumules;
   });
