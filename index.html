@@ -17,11 +17,17 @@ body {
   stroke-width: .5px;
 }
 
-.tooltip {
-	position: absolute;
-	width: 200px;
-	height: 28px;
-	pointer-events: none;
+div.tooltip {
+  position: absolute;
+  text-align: left;
+  width: 200px;
+  height: 50px;
+  padding: 2px;
+  font: 16px sans-serif;
+  background: white;
+  border: 10px;
+  border-radius: 2px;
+  pointer-events: none;
 }
 
 .chart {
@@ -30,6 +36,21 @@ body {
   width: 300px;
   margin: 20px;
 }
+
+
+/*div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 60px;
+  height: 28px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}*/
+
 </style>
 <body>
 <div id="charts">
@@ -44,12 +65,12 @@ body {
 <script>
 
 var margin = {top: 20, right: 20, bottom: 200, left: 40},
-    width = 1200 - margin.left - margin.right,
+    width = 1150 - margin.left - margin.right,
     height = 1000 - margin.top - margin.bottom;
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
-var tooltip = d3.select("body").append("div")
+var div = d3.select("body").append("div")
 					.attr("class", "tooltip")
 					.style("opacity", 0);
 
@@ -125,17 +146,29 @@ function scatterplot(e1, data, w, h, var_x, var_y,var_r,var_color) {
     .attr("cy", function(d) { return y(d[var_y]); })
     .style("fill", function(d) { return color(d[var_color]); })
     .on("mouseover", function(d){
+      d3.select(this).style("fill", "red")
 			// highlight on
-    	d3.selectAll(".dot").filter(function(e) {
-        return e === d;
-      })
-      .style("stroke-width", 10)
+    	// d3.selectAll(".dot").filter(function(e) {
+     //    return e === d;
+     //  })
+      .style("stroke-width", 1)
+      div.transition()
+         .duration(200)
+         .style("opacity", .9);
+      div.html(d.Commune + "<br />" + d[var_r] + " Redevables")
+         .style("left", (d3.event.pageX + 25) + "px")
+         .style("top", (d3.event.pageY - 28) + "px");
+
 		 })
 		.on("mouseout", function(d){
-    	d3.selectAll(".dot").filter(function(e) {
-        return e === d;
-      })
+      d3.select(this).transition().duration(500).style("fill",color(d[var_color]) )
+    	// d3.selectAll(".dot").filter(function(e) {
+     //    return e === d;
+     //  })
       .style("stroke-width", .5)
+      div.transition()
+        .duration(200)
+        .style("opacity",0);
 		})
 		.on("click", function(d){
 			// selection on/off
