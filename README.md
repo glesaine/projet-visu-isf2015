@@ -1,8 +1,17 @@
-# projet-visu-isf2015
+# ISF in France in 2015
 
-Ce projet permet de visualiser des données relatives à l'ISF en France en 2015.
-Deux graphiques ont été réalisés.
+This repository in a simple visualization of the ISF (Solidarity Tax on Wealth) in France in 2015. Two graphs are available:
+* Scatter chart of the tax over towns in France. 
+* Bar chart of the tax over regions in France.
 
-Le premier est un nuage de points donnant l'ISF moyen en fonction du patrimoine moyen au sein de chaque commune française. 
+## Running the visualization
 
-Le second est un diagramme donnant le nombre de redevables de l'ISF en fonction des régions. 
+Just click on this [link](https://www.linkedin.com/in/guillaume-lesaine/)
+
+## Built With
+
+* [D3](https://d3js.org/) - The Javascript library used to producing dynamic charts.
+
+## Author
+
+* **Guillaume LESAINE** - [LinkedIn](https://www.linkedin.com/in/guillaume-lesaine/)
