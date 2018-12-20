@@ -6,7 +6,7 @@ This repository in a simple visualization of the ISF (Solidarity Tax on Wealth) 
 
 ## Running the visualization
 
-Just click on this [link](https://glesaine.github.io/projet-visu-isf2015/)!
+Just click on this [link](https://guillaume-lesaine.github.io/projet-visu-isf2015/)!
 
 ## Built With
 
